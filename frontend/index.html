@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Plateforme de suivi et de valorisation du réseau Alumni EIGSI." />
+  <title>EIGSI Alumni — Pilotage du réseau</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230b3b67'/%3E%3Cpath d='M14 18h36v9H25v6h21v8H25v6h25v9H14z' fill='%23fff'/%3E%3Ccircle cx='49' cy='14' r='7' fill='%23e85d3f'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand"><span class="brand-mark">E</span><div><strong>EIGSI</strong><small>Alumni</small></div></div>
+      <nav id="mainNav" aria-label="Navigation principale"></nav>
+      <div class="sidebar-foot">
+        <div class="role-label">Vue active</div>
+        <select id="roleSelect" aria-label="Choisir un rôle">
+          <option value="admin">Service Alumni</option>
+          <option value="direction">Direction</option>
+          <option value="alumni">Alumni</option>
+          <option value="consult">Consultation</option>
+        </select>
+        <div class="privacy"><span>RGPD</span><small>Données de démonstration locales</small></div>
+      </div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <button class="icon-button menu-button" id="menuButton" aria-label="Ouvrir le menu">☰</button>
+        <div><p class="eyebrow" id="pageEyebrow">SERVICE ALUMNI</p><h1 id="pageTitle">Vue d'ensemble</h1></div>
+        <div class="top-actions"><button class="secondary" id="resetButton">Réinitialiser la démo</button><div class="avatar">SR</div></div>
+      </header>
+      <section id="app" class="content" aria-live="polite"></section>
+    </main>
+  </div>
+  <div id="toast" class="toast" role="status"></div>
+  <div id="modalRoot"></div>
+  <input type="file" id="csvInput" accept=".csv,text/csv" hidden />
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
