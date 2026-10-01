@@ -181,14 +181,14 @@ Les captures finales sont documentées dans [`docs/screenshots/`](docs/screensho
 
 ## Démonstration vidéo
 
-Voir [`demo/README.md`](demo/README.md). Les vidéos doivent être ajoutées sous la forme `NomEtudiant.mp4` et rester sous 100 Mo. Aucun nom ni fichier vidéo artificiel n'est créé.
+Voir [`demo/README.md`](demo/README.md). La démonstration de Ziad Harrasse est livrée sous le nom `ZiadHarrasse.mp4` et reste sous 100 Mo. Toute vidéo supplémentaire doit suivre la forme `NomEtudiant.mp4`.
 
 ## Limites connues
 
 - l'interface exploite encore `localStorage` et n'appelle pas tous les endpoints de l'API ;
 - l'envoi d'e-mails, le SSO EIGSI et l'authentification JWT complète exigent les services institutionnels ;
 - les données affichées sont fictives ;
-- aucune vidéo d'étudiant ni capture définitive n'est versionnée ;
+- les captures d'écran définitives restent à ajouter dans `docs/screenshots/` ;
 - les recommandations par IA sont hors MVP.
 
 ## Rapports
@@ -198,4 +198,4 @@ Voir [`demo/README.md`](demo/README.md). Les vidéos doivent être ajoutées sou
 
 ## Contributeurs
 
-Projet réalisé par l'équipe projet EIGSI. Les noms individuels seront ajoutés uniquement après validation par les étudiants concernés.
+Projet réalisé par l'équipe projet EIGSI. Démonstration vidéo fournie par Ziad Harrasse.

@@ -1,6 +1,10 @@
 # Démonstrations vidéo
 
-Aucune vidéo MP4 n'était présente dans le dépôt au moment de la préparation de cette livraison. Aucun fichier vidéo artificiel n'a été généré.
+## Vidéo livrée
+
+- `ZiadHarrasse.mp4` - démonstration de Ziad Harrasse, 74,71 Mo.
+
+Aucun fichier vidéo artificiel n'a été généré.
 
 ## Une vidéo par étudiant
 
