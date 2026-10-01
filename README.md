@@ -1,7 +1,10 @@
-# Suivi et recensement des Alumni EIGSI
+# EIGSI — Suivi Alumni
 
-Ce dépôt contient le livrable final de la séance 1 du projet SI consacré au suivi et au recensement des Alumni EIGSI.
+Projet de transformation numérique consacré à la fiabilisation et au pilotage du suivi des diplômés.
 
-## Livrable
+## Livrables
 
-- [Rapport final PDF](Rapport_Final_SI_Suivi_Alumni_EIGSI.pdf)
+- [Séance 1 — Cadrage fonctionnel](./Rapport_Final_SI_Suivi_Alumni_EIGSI.pdf)
+- [Séance 2 — Conception technique](./S2_Rapport_Suivi_Alumni.pdf)
+
+Le rapport de conception couvre le backlog Agile du MVP, les maquettes UX/UI, l’architecture technique et la modélisation de la base de données.
