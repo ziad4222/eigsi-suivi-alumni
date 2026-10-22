@@ -4,6 +4,10 @@ Plateforme MVP de collecte, validation, actualisation et pilotage des données A
 
 ## Objectifs et périmètre du MVP
 
+Le guide de travail des séances 3 et 4, les instructions Copilot et le bilan des
+écarts sont disponibles dans [`docs/SEANCES_3_4.md`](docs/SEANCES_3_4.md).
+Les contrôles automatisés sont définis dans `.github/workflows/quality.yml`.
+
 Le MVP remplace les fichiers dispersés par un référentiel cohérent et traçable. Il couvre le parcours : invitation, saisie du profil, consentement, contrôle, correction éventuelle, validation, publication dans l'annuaire et mise à jour des indicateurs.
 
 Le périmètre comprend profil, consentement, doublons, validation, recherche, KPI, CSV, relances et journalisation. La recommandation de contacts par IA reste volontairement hors MVP.
@@ -191,6 +195,16 @@ Voir [`demo/README.md`](demo/README.md). La démonstration de Ziad Harrasse est 
 - les captures d'écran définitives restent à ajouter dans `docs/screenshots/` ;
 - les recommandations par IA sont hors MVP.
 
+Le sélecteur propose les vues Administrateur, Service Alumni, Direction et Alumni.
+Il simule les rôles ; l'en-tête API `X-Role` est également déclaratif et ne constitue
+pas une authentification. Les restrictions du navigateur ne remplacent pas les
+contrôles d'accès d'une application déployée.
+
+Les KPI de la démo utilisent les profils recensés comme population cible et des
+jours calendaires pour les délais. Sans dates de soumission et validation
+mesurables, le délai médian affiche « Non mesuré ». L'import CSV ne présume jamais
+du consentement des personnes importées.
+
 ## Rapports
 
 - [Session 1 - Cadrage fonctionnel](Rapport_Final_SI_Suivi_Alumni_EIGSI.pdf)
@@ -198,4 +212,10 @@ Voir [`demo/README.md`](demo/README.md). La démonstration de Ziad Harrasse est 
 
 ## Contributeurs
 
-Projet réalisé par l'équipe projet EIGSI. Démonstration vidéo fournie par Ziad Harrasse.
+Membres déclarés : Ziad Harrasse, Ahmed Cherif et Dev.
+Démonstration vidéo présente : Ziad Harrasse.
+
+Moteur retenu pour Ziad : Copilot Auto / Standard. L'exécution effective avec ce
+moteur reste à documenter dans VS Code ; les corrections du 22 octobre ont été
+réalisées dans Codex. Les contributions et moteurs des autres membres ne sont pas
+vérifiés. Aucun résultat comparatif ni aucune vidéo manquante n'est inventé.

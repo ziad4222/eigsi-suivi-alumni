@@ -1,0 +1,53 @@
+name: Qualité du MVP
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.25.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run lint
+      - run: pnpm test
+      - run: pnpm run build
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-dev.txt
+      - run: ruff check .
+      - run: pytest -q
+  videos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Vérifier la taille des MP4
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          videos = list(Path('demo').glob('*.mp4'))
+          assert videos, 'Aucune vidéo MP4 présente'
+          for video in videos:
+              size = video.stat().st_size
+              assert 0 < size <= 100_000_000, f'{video}: taille non conforme ({size})'
+              print(f'{video}: {size:,} octets')
+          print('Le nombre de vidéos et les moteurs doivent être vérifiés selon les membres du groupe.')
+          PY

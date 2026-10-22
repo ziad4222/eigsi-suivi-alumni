@@ -8,7 +8,7 @@ describe("interface Alumni", () => {
 
   it("expose le point de montage et les quatre rôles", () => {
     expect(html).toContain('id="app"');
-    for (const role of ["admin", "direction", "alumni", "consult"]) {
+    for (const role of ["admin", "direction", "alumni", "service"]) {
       expect(html).toContain(`value="${role}"`);
     }
   });
