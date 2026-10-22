@@ -1,221 +1,128 @@
-# EIGSI - Suivi Alumni
+# EIGSI — Suivi Alumni
 
-Plateforme MVP de collecte, validation, actualisation et pilotage des données Alumni de l'EIGSI. Le projet fournit une interface démontrable pour les quatre rôles du processus et une API REST prête à fonctionner avec PostgreSQL.
+MVP connecté : les profils, consentements, validations, campagnes et traces sont
+enregistrés par FastAPI dans SQLite ou PostgreSQL. L'interface principale utilise
+les endpoints `/api` ; le navigateur ne contient plus la base métier.
 
-## Objectifs et périmètre du MVP
+## Fonctionnalités
 
-Le guide de travail des séances 3 et 4, les instructions Copilot et le bilan des
-écarts sont disponibles dans [`docs/SEANCES_3_4.md`](docs/SEANCES_3_4.md).
-Les contrôles automatisés sont définis dans `.github/workflows/quality.yml`.
+- Inscription Alumni, connexion, cookie JWT HttpOnly, sessions révocables et expiration.
+- Rôles vérifiés en base : Alumni, Service Alumni, Direction, Administrateur.
+- Création et mise à jour du profil personnel, champs contrôlés, matricule unique.
+- Consentement daté et révocable ; retrait immédiat de l'annuaire à la révocation.
+- Examen de l'unicité, correction/rejet motivé, validation horodatée et auteur réel.
+- Annuaire des profils validés consentants, recherche et filtres combinables.
+- Quatre KPI calculés côté serveur, répartition par promotion.
+- Import CSV avec prévisualisation et bilan par ligne ; export filtré réservé à l'Admin.
+- Campagnes préparées pour les profils de plus de 365 jours et suivi des confirmations.
+- Journal d'activité serveur. Aucun e-mail réel n'est envoyé.
 
-Le MVP remplace les fichiers dispersés par un référentiel cohérent et traçable. Il couvre le parcours : invitation, saisie du profil, consentement, contrôle, correction éventuelle, validation, publication dans l'annuaire et mise à jour des indicateurs.
+## Installation locale (PowerShell)
 
-Le périmètre comprend profil, consentement, doublons, validation, recherche, KPI, CSV, relances et journalisation. La recommandation de contacts par IA reste volontairement hors MVP.
-
-## Fonctionnalités implémentées
-
-- profil Alumni et consentement révocable ;
-- annuaire avec recherche et filtres ;
-- validation, correction, rejet motivé et détection de doublon ;
-- dashboard Direction avec quatre KPI et répartition par promotion ;
-- campagnes, import/export CSV et journal d'activité ;
-- API de création, recherche, validation et agrégation des profils ;
-- contrôle des rôles et contraintes d'unicité côté API ;
-- schéma relationnel et migration Alembic initiale.
-
-> L'interface utilise encore des données de démonstration stockées dans le navigateur. L'API et la base sont opérationnelles, mais leur branchement complet à chaque écran est une évolution identifiée du MVP.
-
-## Acteurs et rôles
-
-| Rôle | Responsabilités principales |
-| --- | --- |
-| Alumni | Compléter le profil, consentir, actualiser les informations et consulter le réseau. |
-| Service Alumni | Contrôler les fiches, traiter les doublons, demander une correction, valider ou rejeter. |
-| Direction | Consulter les KPI et les données agrégées. |
-| Administrateur | Administrer les données, imports, exports, campagnes et traces. |
-
-## Architecture et technologies
-
-```text
-Navigateur
-  ├── frontend/ : Vite + HTML/CSS/JavaScript
-  └── backend/  : FastAPI + Pydantic + SQLAlchemy
-                         │
-                         ├── PostgreSQL en production/Docker
-                         └── SQLite pour le développement rapide
-```
-
-- **Frontend** : Vite, JavaScript, CSS responsive, Vitest et ESLint.
-- **Backend** : Python, FastAPI, Pydantic, SQLAlchemy, Alembic, Pytest et Ruff.
-- **Base** : PostgreSQL 16 ; SQLite pour les tests locaux.
-- **Déploiement local** : Docker Compose.
-
-## Prérequis
-
-- Git ;
-- Node.js 20 ou 22 avec Corepack/pnpm ;
-- Python 3.11 ou 3.12 ;
-- PostgreSQL 16, sauf avec SQLite ou Docker Compose ;
-- Docker Desktop pour le lancement conteneurisé.
-
-## Installation
-
-```bash
-git clone https://github.com/ziad4222/eigsi-suivi-alumni.git
-cd eigsi-suivi-alumni
-cp .env.example .env
-```
-
-Sous PowerShell : `Copy-Item .env.example .env`.
-
-Frontend :
-
-```bash
-cd frontend
-corepack enable
-pnpm install
-pnpm run build
-```
-
-Backend sous Linux/macOS :
-
-```bash
-cd backend
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements-dev.txt
-```
-
-Backend sous PowerShell :
+Prérequis : Git, Node.js 22, pnpm, Python 3.12.
 
 ```powershell
+git clone https://github.com/ziad4222/eigsi-suivi-alumni.git
+cd eigsi-suivi-alumni
+Copy-Item .env.example .env
 cd backend
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements-dev.txt
-```
-
-## Configuration
-
-Copier `.env.example` vers `.env`, puis renseigner localement :
-
-| Variable | Description |
-| --- | --- |
-| `DATABASE_URL` | URL SQLAlchemy PostgreSQL ou SQLite. |
-| `SECRET_KEY` | Secret fort utilisé par l'authentification future. |
-| `ACCESS_TOKEN_EXPIRE_MINUTES` | Durée de vie d'un jeton d'accès. |
-| `CORS_ORIGINS` | Origines frontend autorisées, séparées par des virgules. |
-| `POSTGRES_DB` | Nom de la base utilisée par Docker Compose. |
-| `POSTGRES_USER` | Utilisateur PostgreSQL utilisé par Docker Compose. |
-| `POSTGRES_PASSWORD` | Mot de passe PostgreSQL local utilisé par Docker Compose. |
-
-Ne jamais committer `.env`. Les identifiants de `docker-compose.yml` servent uniquement au développement local.
-
-## Base de données
-
-Par défaut, l'API utilise `sqlite:///./alumni.db`. Pour PostgreSQL, renseigner `DATABASE_URL`, puis :
-
-```bash
-cd backend
 alembic upgrade head
+python -m app.bootstrap --demo
+uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
-Pour créer une future migration :
+Le bootstrap demande un mot de passe choisi localement et crée quatre comptes
+fictifs : `alumni@example.com`, `service@example.com`, `direction@example.com`,
+`admin@example.com`. Il conserve les comptes déjà présents. Un profil fictif
+Alumni est initialement en attente de validation.
 
-```bash
-alembic revision --autogenerate -m "description"
-```
+Dans un deuxième terminal, à la racine du dépôt :
 
-## Lancer la plateforme
-
-Terminal 1 :
-
-```bash
-cd backend
-uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
-```
-
-Terminal 2 :
-
-```bash
+```powershell
 cd frontend
+pnpm install --frozen-lockfile
 pnpm run dev
 ```
 
-- interface : <http://localhost:4173> ;
-- documentation API : <http://localhost:8000/docs> ;
-- contrôle API : <http://localhost:8000/health>.
+- Interface : http://localhost:4173
+- Documentation API : http://localhost:8000/docs
+- Santé : http://localhost:8000/health
 
-Avec Docker Compose :
+Le proxy Vite transmet `/api` au backend. `API_TARGET` peut remplacer
+`http://127.0.0.1:8000` ; Docker utilise `http://backend:8000`.
 
-```bash
-docker compose up --build
-```
+Pour créer un compte privilégié individuel : `python -m app.bootstrap --email
+responsable@example.com --role SERVICE` (commande sur une ligne depuis backend).
+L'inscription publique crée toujours un compte ALUMNI, jamais un rôle privilégié.
 
-## Tests et qualité
+## Configuration et données
 
-```bash
+`.env` n'est jamais committé. Renseigner `SECRET_KEY` avec une valeur aléatoire
+longue pour conserver les sessions après redémarrage. Sans clé configurée, une clé
+éphémère est créée et les utilisateurs doivent se reconnecter après redémarrage.
+`ACCESS_TOKEN_EXPIRE_MINUTES` vaut 30. Sous HTTPS, activer `COOKIE_SECURE=true`.
+Les mots de passe sont hachés avec scrypt ; les jetons restent en cookie HttpOnly.
+`X-Role` est ignoré : seul le compte authentifié décide des droits.
+
+L'API n'expose dans l'annuaire ni e-mail, ni matricule, ni commentaire de contrôle.
+Le Service Alumni et l'Admin peuvent accéder aux fiches privées ; la Direction
+consulte les données agrégées et l'annuaire professionnel.
+
+Pour PostgreSQL/Docker, renseigner `POSTGRES_PASSWORD` et les variables PostgreSQL
+dans `.env`, puis `docker compose up --build`. Initialiser les comptes avec
+`docker compose exec backend python -m app.bootstrap --demo`.
+Le lancement Docker/PostgreSQL n'a pas été exécuté sur cette machine ; les tests
+et migrations ont été vérifiés avec SQLite.
+
+## Qualité et démonstration
+
+```powershell
 cd frontend
 pnpm run lint
 pnpm test
 pnpm run build
-
 cd ../backend
 ruff check .
 pytest -q
 ```
 
-## Structure
+Le workflow `.github/workflows/quality.yml` exécute ces contrôles et vérifie la
+taille des MP4. La suite comprend les anciens tests de la démo locale et les tests
+API du parcours connecté : propriété du profil, droits, publication, révocation,
+import/export et invalidation des sessions. Voir `docs/SEANCES_3_4.md` pour le bilan.
+
+## Limites explicites
+
+- L'interface reste en JavaScript/Vite ; la conception S2 prévoyait React/TypeScript.
+- Pas de SSO, d'e-mail de vérification, de récupération de mot de passe ni de refresh
+  token ; à expiration, l'utilisateur se reconnecte. La protection anti-abus et les
+  sauvegardes sont à configurer avant une ouverture publique du service.
+- Les comptes importés sont verrouillés (`INVITATION_PENDING`) ; la distribution
+  d'invitations et l'activation des comptes ne sont pas implémentées.
+- Les campagnes restent préparées en base ; les confirmations ultérieures sont
+  comptées, sans prétendre mesurer une livraison d'e-mails.
+- La couverture utilise les fiches recensées comme dénominateur, faute de référentiel
+  institutionnel des diplômés ciblés. Délais en jours calendaires et fraîcheur à 365 jours.
+- Les anciennes fonctions locales sont conservées dans `frontend/public/app.js`
+  pour référence et tests ; seule `connected.js` est chargée par l'interface.
+- Les recommandations IA sont hors MVP.
+
+## Rendu pédagogique
+
+Rapports de cadrage et S2 présents à la racine. Instructions de travail dans
+`.github/copilot-instructions.md`. Vidéo existante : `demo/ZiadHarrasse.mp4`,
+78 339 007 octets. Elle doit être revue ou refaite pour montrer cette version connectée.
+
+Membres déclarés : Ziad Harrasse, Ahmed Cherif et Dev. Moteur retenu pour Ziad :
+Copilot Auto/Standard. Les corrections ici ont été réalisées dans Codex ; les
+exécutions individuelles Gemini/Auto/Grok et les contributions des autres membres
+ne sont pas attestées. Les vidéos manquantes et résultats comparatifs ne sont pas inventés.
+
+Message de soumission, une fois le rendu contrôlé :
 
 ```text
-.
-├── backend/                 # API, schéma, migrations et tests
-├── frontend/                # Interface, styles et tests
-├── demo/                    # Consignes et futures vidéos MP4
-├── docs/screenshots/        # Captures finales validées
-├── Rapport_Final_SI_Suivi_Alumni_EIGSI.pdf
-├── S2_Rapport_Suivi_Alumni.pdf
-├── .env.example
-└── docker-compose.yml
+MAJ GIT (MVP) : https://github.com/ziad4222/eigsi-suivi-alumni
 ```
-
-## Captures d'écran
-
-Les captures finales sont documentées dans [`docs/screenshots/`](docs/screenshots/README.md) : dashboard Direction, profil Alumni, validation Service Alumni et annuaire.
-
-## Démonstration vidéo
-
-Voir [`demo/README.md`](demo/README.md). La démonstration de Ziad Harrasse est livrée sous le nom `ZiadHarrasse.mp4` et reste sous 100 Mo. Toute vidéo supplémentaire doit suivre la forme `NomEtudiant.mp4`.
-
-## Limites connues
-
-- l'interface exploite encore `localStorage` et n'appelle pas tous les endpoints de l'API ;
-- l'envoi d'e-mails, le SSO EIGSI et l'authentification JWT complète exigent les services institutionnels ;
-- les données affichées sont fictives ;
-- les captures d'écran définitives restent à ajouter dans `docs/screenshots/` ;
-- les recommandations par IA sont hors MVP.
-
-Le sélecteur propose les vues Administrateur, Service Alumni, Direction et Alumni.
-Il simule les rôles ; l'en-tête API `X-Role` est également déclaratif et ne constitue
-pas une authentification. Les restrictions du navigateur ne remplacent pas les
-contrôles d'accès d'une application déployée.
-
-Les KPI de la démo utilisent les profils recensés comme population cible et des
-jours calendaires pour les délais. Sans dates de soumission et validation
-mesurables, le délai médian affiche « Non mesuré ». L'import CSV ne présume jamais
-du consentement des personnes importées.
-
-## Rapports
-
-- [Session 1 - Cadrage fonctionnel](Rapport_Final_SI_Suivi_Alumni_EIGSI.pdf)
-- [Session 2 - Conception technique](S2_Rapport_Suivi_Alumni.pdf)
-
-## Contributeurs
-
-Membres déclarés : Ziad Harrasse, Ahmed Cherif et Dev.
-Démonstration vidéo présente : Ziad Harrasse.
-
-Moteur retenu pour Ziad : Copilot Auto / Standard. L'exécution effective avec ce
-moteur reste à documenter dans VS Code ; les corrections du 22 octobre ont été
-réalisées dans Codex. Les contributions et moteurs des autres membres ne sont pas
-vérifiés. Aucun résultat comparatif ni aucune vidéo manquante n'est inventé.

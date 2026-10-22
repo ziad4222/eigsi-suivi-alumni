@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     secret_key: str = ""
     access_token_expire_minutes: int = 30
     cors_origins: str = "http://localhost:4173"
+    cookie_secure: bool = False
 
     model_config = SettingsConfigDict(env_file="../.env", extra="ignore")
 

@@ -1,104 +1,102 @@
-# Séances 3 et 4 : conduite du travail et état du rendu
+# Séances 3 et 4 — Bilan du MVP
 
-État vérifié le 22 octobre 2026. Ce document complète l'énoncé fourni ; il ne
-remplace pas le guide Word pédagogique, qui n'a pas été fourni et dont le lien
-n'a pas pu être lu depuis l'environnement de travail.
+État vérifié le 22 octobre 2026.
 
 ## Partie A — Analyse et préparation
 
-1. Lire le cadrage et le rapport S2 à la racine.
-2. Installer Git, Node 22, pnpm, Python 3.12 ; suivre le README.
-3. Exécuter l'interface et l'API dans deux terminaux.
-4. Exécuter les contrôles de qualité avant de demander une évolution.
-5. Relever les écarts : interface JavaScript au lieu de React/TypeScript,
-   données locales au lieu d'un branchement complet, rôle de démonstration au lieu
-   d'une authentification JWT. Ces points empêchent de certifier la conformité
-   technique totale au rapport S2.
+Les deux rapports de conception présents à la racine ont été lus. Le développement
+reprend les parcours Alumni, Service Alumni, Direction et Administrateur. Le README
+décrit l'installation Python/Node, les migrations et le démarrage en deux terminaux.
 
-## Partie B — Instructions et agents
+Le guide Word pédagogique n'a pas été fourni et son lien n'a pas pu être lu :
+ce bilan ne peut donc pas certifier ses instructions détaillées. La stack effective
+est JavaScript/Vite et FastAPI/SQLAlchemy, avec SQLite localement et PostgreSQL prévu
+dans Docker. React/TypeScript prévus dans le rapport S2 ne sont pas utilisés.
 
-Les règles communes sont dans `.github/copilot-instructions.md`.
-Dans VS Code, ouvrir le dépôt et utiliser Copilot en mode Agent avec le moteur
-attribué par l'enseignant. La configuration des moteurs et les accès API doivent
-être effectués dans l'environnement de l'étudiant ; aucune clé ne va dans Git.
+## Partie B — Instructions et agents du workspace
 
-Premier prompt :
+Les instructions communes sont dans `.github/copilot-instructions.md` : proposer un
+plan, attendre « OK », puis modifier les fichiers et vérifier les résultats.
 
-> Lis les rapports de conception, le README et les instructions du workspace.
-> Identifie les critères Must manquants et propose un PLAN avec les fichiers à
-> modifier et les tests à exécuter. Ne modifie aucun fichier avant mon « OK ».
+Prompt de départ suggéré, qui ne remplace pas le guide Word :
 
-Ces prompts sont des propositions pour ce dépôt, pas une transcription du Word.
+> Lis le cadrage, la conception S2, le README et les instructions du workspace.
+> Propose un plan précis avec les fichiers concernés et les tests à exécuter.
+> Ne modifie aucun fichier avant mon « OK ».
+
+Membres déclarés par l'utilisateur : Ziad Harrasse, Ahmed Cherif et Dev.
+Moteur retenu pour Ziad : Copilot Auto/Standard. Les corrections de cette livraison
+ont été réalisées dans Codex. L'exécution de l'Agent Copilot avec Auto/Standard
+reste à documenter dans VS Code. Les moteurs et contributions des autres membres
+ne sont pas vérifiés. Aucun résultat Gemini/Grok n'est inventé.
+
+Pour comparer les modèles, conserver pour chaque vraie exécution : nom, moteur,
+date, commit de départ, prompts, plans et OK, durée, erreurs, corrections manuelles,
+résultats des tests, commit final et vidéo correspondante.
 
 ## Partie C — Construction et validation
 
-Pour chaque évolution : plan, réponse OK, implémentation, vérification, bilan.
+L'interface principale charge `connected.js` et appelle l'API. Les données métier
+sont enregistrées en base, indépendamment du navigateur. La connexion utilise un
+JWT en cookie HttpOnly et une session serveur révocable. Les rôles proviennent
+du compte en base ; `X-Role` est ignoré et le sélecteur de rôle est désactivé.
 
-Prompt de construction :
+Parcours réalisés :
 
-> Sur la base de la conception validée, traite une user story à la fois. Propose
-> d'abord le plan. Après mon OK, implémente et exécute les tests pertinents.
-> Montre les résultats et les limites sans annoncer des tests non exécutés.
+- Création d'un compte Alumni ; les comptes privilégiés sont créés par la CLI.
+- Saisie et modification du profil personnel avec validation des champs.
+- Consentement daté, retrait immédiat de l'annuaire après révocation.
+- Unicité e-mail et matricule en base, examen humain explicite sans fusion automatique.
+- Correction/rejet motivé ; validation, auteur et horodatage enregistrés.
+- Annuaire professionnel filtré, sans e-mail, matricule ou commentaires privés.
+- KPI agrégés calculés côté serveur ; actualisation après validation.
+- Import CSV prévisualisé, validation serveur, bilan par ligne, sans consentement présumé.
+- Export filtré réservé à l'Admin, neutralisation des formules de tableur et journalisation.
+- Campagnes en brouillon ciblant les profils non confirmés depuis plus de 365 jours ;
+  suivi des confirmations postérieures, sans prétendre envoyer de véritables e-mails.
 
-Prompt de revue :
+## Vérifications effectuées
 
-> Vérifie le parcours alumni → consentement → correction/validation → annuaire
-> → KPI, puis l'import/export CSV et le rechargement. Vérifie les droits côté
-> serveur et distingue les simulations locales. Propose un plan de correction.
+- 13 tests frontend, incluant les tests historiques du DOM de la démo locale.
+- 10 tests API : identité, rôles, propriété des profils, workflow complet, révocation,
+  expiration et déconnexion, import/export filtré et campagnes.
+- ESLint, Ruff et compilation Vite réussis.
+- Migration SQLite testée sur installation neuve et sur le schéma précédent 0001.
+- Navigateur : connexion Alumni, profil lu depuis la base, connexion Service,
+  examen d'unicité, validation, publication dans l'annuaire et KPI de la Direction.
+- Les données et la validation restent présentes après redémarrage du backend.
+- Le workflow GitHub Actions est fourni ; aucun résultat distant n'est annoncé
+  sans exécution observable. Docker/PostgreSQL n'ont pas été exécutés localement.
 
-## Corrections et vérifications réalisées dans Codex
+Les captures `docs/screenshots/` montrent des données fictives du parcours connecté.
 
-- Actions des boutons rendues accessibles depuis le module JavaScript.
-- Blocage d'une publication sans consentement ou avec doublon non examiné.
-- Examen explicite du doublon, motifs de correction/rejet et dates conservés.
-- Contrôle de l'unicité lors de la modification d'une fiche.
-- Échappement des valeurs utilisateur lors du rendu HTML.
-- KPI recalculés, fraîcheur glissante, médiane issue des décisions datées.
-- CSV : champs cités et multilignes, prévisualisation, erreurs par ligne,
-  unicité et absence de consentement présumé.
-- Export nominatif restreint dans la démo ; il reste nécessaire de faire
-  appliquer les droits par une véritable authentification serveur.
-- Tests frontend exécutant les fonctions et le DOM, tests API existants,
-  lint frontend/backend et compilation frontend.
-- Workflow GitHub Actions ajouté ; son résultat distant est à distinguer des
-  contrôles locaux.
+## Limites à connaître
 
-Le taux de couverture affiché utilise les fiches recensées de la démo comme
-dénominateur. Le vrai référentiel des diplômés ciblés n'est pas disponible.
-Le délai affiché est en jours calendaires, faute de calendrier institutionnel.
+Pas de SSO, d'e-mail de vérification, de récupération de mot de passe, de refresh
+token ou d'envoi d'e-mails. Les comptes importés sont verrouillés en attente d'un
+processus d'invitation non implémenté. Avant une ouverture publique du service,
+configurer HTTPS/cookie sécurisé, clé stable, anti-abus et sauvegardes.
 
-## Points restant nécessaires avant de déclarer le devoir terminé
+La couverture utilise les fiches recensées faute de référentiel institutionnel
+des diplômés ciblés ; délais calendaires et fraîcheur à 365 jours.
 
-| Point | État |
-| --- | --- |
-| Dépôt public | Vérifié par l'API GitHub le 22/10/2026 |
-| Rapports de conception | Présents et lus |
-| MVP local | Parcours corrigés ; données toujours dans le navigateur |
-| API et base | Tests existants passent ; intégration complète à faire |
-| JWT et RBAC réels | Non implémentés ; X-Role est déclaratif |
-| Guide pédagogique Word | À fournir pour contrôler ses instructions exactes |
-| Moteur retenu pour Ziad | Copilot Auto / Standard ; exécution à documenter dans VS Code |
-| Exécutions individuelles Gemini/Auto/Grok | Non vérifiées ; aucune preuve fabriquée |
-| Vidéo ZiadHarrasse.mp4 | Présente, 78 339 007 octets ; contenu/audio à revoir |
-| Vidéos des autres membres | Absentes du dépôt inspecté ; Ahmed Cherif et Dev, contributions non vérifiées |
-| Comparatif des moteurs | À renseigner à partir des véritables exécutions |
-| Soumission sur la plateforme | Non effectuée |
+## Vidéos et soumission
 
-## Comparatif à remplir pendant les vraies exécutions
+La vidéo `demo/ZiadHarrasse.mp4` est présente : 78 339 007 octets, sous 100 Mo.
+Son contenu/audio n'a pas été revu ; elle doit être vérifiée ou refaite pour cette
+version connectée. Les vidéos d'Ahmed Cherif et Dev sont absentes du dépôt inspecté.
+Une vidéo et une véritable exécution du moteur attribué restent nécessaires par
+étudiant. L'existence de ce code ne prouve pas ces exécutions.
 
-Pour chaque étudiant : nom, moteur, date, commit de départ, user stories,
-prompt, plan et OK, durée, erreurs, interventions manuelles, résultats des tests,
-limites observées, commit final et fichier vidéo. Aucune de ces mesures ne doit
-être déduite de l'existence du code ou de la vidéo.
+Scénario : connexion Alumni → profil et consentement → déconnexion → connexion
+Service → examen, correction ou validation → annuaire → connexion Direction et
+KPI → connexion Admin, CSV et journal. Montrer les limites réelles de l'application.
 
-## Démonstration et soumission
-
-Suivre le scénario de `demo/README.md`, montrer les fonctionnalités réellement
-présentes et expliquer les limites. Refaire la vidéo si elle ne correspond plus
-à l'état final. Chaque étudiant doit filmer son MVP et préciser son moteur.
-
-Après les vérifications, une personne du groupe soumet sur la plateforme :
+Une personne du groupe doit encore déposer sur la plateforme pédagogique :
 
 ```text
 MAJ GIT (MVP) : https://github.com/ziad4222/eigsi-suivi-alumni
 ```
+
+La soumission pédagogique n'a pas été effectuée par Codex. Le rendu complet dépend
+encore des vidéos, de la preuve des exécutions individuelles et du guide Word.

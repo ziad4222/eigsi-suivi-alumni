@@ -24,6 +24,8 @@ services:
         condition: service_healthy
   frontend:
     build: ./frontend
+    environment:
+      API_TARGET: http://backend:8000
     ports: ["4173:4173"]
     depends_on: [backend]
 volumes:

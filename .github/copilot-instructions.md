@@ -15,9 +15,9 @@ Si le périmètre change, présenter le nouveau plan avant les modifications ass
 - Stack effective : Vite + JavaScript, FastAPI + SQLAlchemy, PostgreSQL/SQLite.
 - La conception S2 prévoyait React/TypeScript : documenter cet écart, sans prétendre
   que le code actuel utilise ces technologies.
-- L'interface actuelle utilise localStorage. Ne pas annoncer de persistance serveur
-  ou d'authentification réelle tant que ces parcours ne sont pas implémentés et testés.
-- X-Role est un mécanisme de démonstration, pas une authentification sécurisée.
+- L’interface principale connected.js utilise l’API et la base. app.js conserve l’ancienne démo locale.
+- JWT en cookie HttpOnly, sessions révocables et rôles issus de la base ; ignorer X-Role.
+- Aucun refresh token, SSO ou envoi d’e-mail réel n’est implémenté.
 
 ## Règles métier
 
