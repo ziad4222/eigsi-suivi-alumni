@@ -2,7 +2,7 @@ import enum
 import uuid
 from datetime import UTC, date, datetime
 
-from sqlalchemy import Boolean, Date, DateTime, Enum, ForeignKey, Integer, String, Text
+from sqlalchemy import JSON, Boolean, Date, DateTime, Enum, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .database import Base
@@ -50,6 +50,11 @@ class AlumniProfile(Base):
     employment_status: Mapped[str] = mapped_column(String(80), nullable=False)
     city: Mapped[str] = mapped_column(String(120), nullable=False)
     country: Mapped[str] = mapped_column(String(120), nullable=False)
+    full_name: Mapped[str] = mapped_column(String(160), default="", server_default="")
+    company: Mapped[str] = mapped_column(String(160), default="", server_default="")
+    sector: Mapped[str] = mapped_column(String(120), default="", server_default="")
+    mentor: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
+    duplicate_checked: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
     last_confirmed_at: Mapped[datetime | None] = mapped_column(DateTime)
     submitted_at: Mapped[datetime | None] = mapped_column(DateTime)
     status: Mapped[ProfileStatus] = mapped_column(Enum(ProfileStatus), default=ProfileStatus.DRAFT)
@@ -101,4 +106,23 @@ class AuditLog(Base):
     action: Mapped[str] = mapped_column(String(50), nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False
+    )
+
+
+class AuthSession(Base):
+    __tablename__ = "auth_sessions"
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    expires_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+
+
+class Campaign(Base):
+    __tablename__ = "campaigns"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    name: Mapped[str] = mapped_column(String(160), nullable=False)
+    message: Mapped[str] = mapped_column(Text, nullable=False)
+    created_by: Mapped[str] = mapped_column(ForeignKey("users.id"), nullable=False)
+    recipient_ids: Mapped[list[str]] = mapped_column(JSON, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=lambda: datetime.now(UTC).replace(tzinfo=None)
     )

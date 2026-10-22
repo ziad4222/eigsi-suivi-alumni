@@ -13,7 +13,7 @@ export default [
     rules: {
       ...js.configs.recommended.rules,
       "no-unused-vars": ["error", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
-      "no-undef": "off"
+      "no-undef": "error"
     }
   },
   {
