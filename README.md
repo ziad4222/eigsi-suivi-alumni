@@ -4,6 +4,10 @@ MVP connecté : les profils, consentements, validations, campagnes et traces son
 enregistrés par FastAPI dans SQLite ou PostgreSQL. L'interface principale utilise
 les endpoints `/api` ; le navigateur ne contient plus la base métier.
 
+## Rapport de séance 5
+
+[Rapport final du MVP (PDF)](Rapport_Final_MVP_Suivi_Alumni.pdf) : évaluation, KPI, retour d'expérience, processus augmenté par l'IA et architecture. Les retours de recette métier et les mesures initiales restent à documenter.
+
 ## Fonctionnalités
 
 - Inscription Alumni, connexion, cookie JWT HttpOnly, sessions révocables et expiration.
